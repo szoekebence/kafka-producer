@@ -1,0 +1,8 @@
+app:
+  resourceName: "Kafka-Producer"
+spring:
+  application:
+    name: Kafka-Producer
+  schedule:
+    fixedDelayMs: ${FIXED_DELAY_MS:1000}
+    initialDelayMs: ${INITIAL_DELAY_MS:1000}
