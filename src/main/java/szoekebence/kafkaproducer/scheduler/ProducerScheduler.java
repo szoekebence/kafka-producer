@@ -7,11 +7,18 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class ProducerScheduler implements CommandLineRunner {
@@ -21,33 +28,51 @@ public class ProducerScheduler implements CommandLineRunner {
 
     private static final String TOPIC_NAME = "streams-input";
     private static final Logger LOGGER = LoggerFactory.getLogger(ProducerScheduler.class);
+    private List<InputStream> inputStreams;
 
     @Override
     public void run(String... args) {
         try {
             produceMessages();
         } catch (Exception e) {
-            LOGGER.error(String.format("Exception occurred during message producing: %s", e.getMessage()));
+            LOGGER.error(String.format("Exception occurred while producing messages: %s", e.getMessage()));
         } finally {
             System.exit(0);
         }
     }
 
     private void produceMessages() throws IOException {
-        kafkaTemplate.send(TOPIC_NAME, readFile());
+        loadFilesFromDir();
+        for (InputStream inputStream : inputStreams) {
+            sendDataToTopic(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
+        }
+    }
+
+    private void sendDataToTopic(String data) {
+        kafkaTemplate.send(TOPIC_NAME, data);
         LOGGER.info("File send successful.");
     }
 
-    private String readFile() throws IOException {
-        StringBuilder resultStringBuilder = new StringBuilder();
-        Path path = Paths.get("src/main/resources/private_data/customer_lab_mtas_ebm_feb_2022/A20220209.2139+0000-20220209.2140+0000_1_ims.json");
-        try (BufferedReader br = Files.newBufferedReader(path)) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                resultStringBuilder.append(line).append("\n");
-            }
+    private void loadFilesFromDir() {
+        try (Stream<Path> path = Files
+                .walk(Paths.get("src/main/resources/private_data/customer_lab_mtas_ebm_feb_2022/"))) {
+            inputStreams = path
+                    .filter(Files::isRegularFile)
+                    .map(Path::toString)
+                    .map(this::generateInputStream)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            LOGGER.warn(String.format("File read fails: %s", e.getMessage()));
         }
-        LOGGER.info("File read successful.");
-        return resultStringBuilder.toString();
+    }
+
+    private InputStream generateInputStream(String path) {
+        try {
+            return new FileInputStream(path);
+        } catch (FileNotFoundException e) {
+            LOGGER.warn(String.format("File not found: %s", e.getMessage()));
+        }
+        return null;
     }
 }
