@@ -1,7 +1,0 @@
-app:
-  resourceName: "Kafka-Producer"
-spring:
-  application:
-    name: Kafka-Producer
-server:
-  port: 8080

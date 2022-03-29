@@ -1,11 +1,9 @@
 package szoekebence.kafkaproducer.scheduler;
 
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,20 +15,24 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Component
-public class ProducerScheduler implements CommandLineRunner {
-
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+public class ProducerScheduler {
 
     private static final String TOPIC_NAME = "streams-input";
     private static final Logger LOGGER = LoggerFactory.getLogger(ProducerScheduler.class);
+    private final Properties properties;
     private List<InputStream> inputStreams;
 
-    @Override
+    public ProducerScheduler() {
+        properties = new Properties();
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+    }
+
     public void run(String... args) {
         try {
             produceMessages();
@@ -49,13 +51,11 @@ public class ProducerScheduler implements CommandLineRunner {
     }
 
     private void sendDataToTopic(String data) {
-        kafkaTemplate.send(TOPIC_NAME, data);
-        LOGGER.info("File send successful.");
     }
 
     private void loadFilesFromDir() {
         try (Stream<Path> path = Files
-                .walk(Paths.get("src/main/resources/private_data/customer_lab_mtas_ebm_feb_2022/"))) {
+                .walk(Paths.get("src/main/resources/private_data/custom/"))) {
             inputStreams = path
                     .filter(Files::isRegularFile)
                     .map(Path::toString)
