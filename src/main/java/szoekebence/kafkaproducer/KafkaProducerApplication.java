@@ -1,12 +1,11 @@
 package szoekebence.kafkaproducer;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import szoekebence.kafkaproducer.scheduler.MyProducer;
 
-@SpringBootApplication
 public class KafkaProducerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(KafkaProducerApplication.class, args);
+        MyProducer producer = new MyProducer();
+        producer.produce();
     }
 }
