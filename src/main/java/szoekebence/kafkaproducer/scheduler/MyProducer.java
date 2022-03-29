@@ -3,6 +3,7 @@ package szoekebence.kafkaproducer.scheduler;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
@@ -28,12 +28,13 @@ public class MyProducer {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyProducer.class);
     private final Properties properties;
     private List<InputStream> inputStreams;
+    private Integer sequenceNumber = 0;
 
     public MyProducer() {
         loadFilesFromDir();
         properties = new Properties();
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
     }
 
@@ -52,22 +53,22 @@ public class MyProducer {
     }
 
     private void sendDataToTopic(String data) {
-        try (KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>(properties)) {
+        try (KafkaProducer<Integer, String> kafkaProducer = new KafkaProducer<>(properties)) {
             kafkaProducer.send(generateProducerRecord(data));
             kafkaProducer.flush();
+            LOGGER.info(String.format("File read successfully with sequenceNumber: %s", sequenceNumber++));
         }
     }
 
-    private ProducerRecord<String, String> generateProducerRecord(String data) {
+    private ProducerRecord<Integer, String> generateProducerRecord(String data) {
         return new ProducerRecord<>(
                 TOPIC_NAME,
-                LocalDateTime.now().toString(),
+                sequenceNumber,
                 data);
     }
 
     private void loadFilesFromDir() {
-        try (Stream<Path> path = Files
-                .walk(Paths.get("src/main/resources/private_data/custom/"))) {
+        try (Stream<Path> path = Files.walk(Paths.get("src/main/resources/private_data/custom/"))) {
             inputStreams = path
                     .filter(Files::isRegularFile)
                     .map(Path::toString)
@@ -75,7 +76,7 @@ public class MyProducer {
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            LOGGER.warn(String.format("File read fails: %s", e.getMessage()));
+            LOGGER.warn(String.format("File read failed: %s", e.getMessage()));
         }
     }
 
