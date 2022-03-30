@@ -1,6 +1,6 @@
 package szoekebence.kafkaproducer;
 
-import szoekebence.kafkaproducer.scheduler.MyKafkaProducer;
+import szoekebence.kafkaproducer.producer.MyKafkaProducer;
 
 public class KafkaProducerApplication {
 
