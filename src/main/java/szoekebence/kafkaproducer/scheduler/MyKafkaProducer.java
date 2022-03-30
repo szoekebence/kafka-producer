@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 
 public class MyKafkaProducer {
 
-    private static final String TOPIC_NAME = "streams-input";
+    private static final String TOPIC_TO_SEND = "streams-input";
     private static final Logger LOGGER = LoggerFactory.getLogger(MyKafkaProducer.class);
     private final Properties properties;
     private List<InputStream> inputStreams;
@@ -64,7 +64,7 @@ public class MyKafkaProducer {
 
     private ProducerRecord<Void, String> generateProducerRecord(String data) {
         return new ProducerRecord<>(
-                TOPIC_NAME,
+                TOPIC_TO_SEND,
                 data);
     }
 
