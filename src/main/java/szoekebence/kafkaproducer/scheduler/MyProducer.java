@@ -3,8 +3,8 @@ package szoekebence.kafkaproducer.scheduler;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.apache.kafka.common.serialization.VoidSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ public class MyProducer {
         loadFilesFromDir();
         properties = new Properties();
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class.getName());
+        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, VoidSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
     }
 
@@ -46,24 +46,25 @@ public class MyProducer {
         }
     }
 
-    private void produceMessages() throws IOException {
+    private void produceMessages() throws IOException, InterruptedException {
         for (InputStream inputStream : inputStreams) {
             sendDataToTopic(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
+            Thread.sleep(500);
         }
     }
 
     private void sendDataToTopic(String data) {
-        try (KafkaProducer<Integer, String> kafkaProducer = new KafkaProducer<>(properties)) {
-            kafkaProducer.send(generateProducerRecord(data));
+        try (KafkaProducer<Void, String> kafkaProducer = new KafkaProducer<>(properties)) {
+            ProducerRecord<Void, String> record = generateProducerRecord(data);
+            kafkaProducer.send(record);
             kafkaProducer.flush();
-            LOGGER.info(String.format("File read successfully with sequenceNumber: %s", sequenceNumber++));
+            LOGGER.info(String.format("File read successfully with sequenceNumber: %d", sequenceNumber++));
         }
     }
 
-    private ProducerRecord<Integer, String> generateProducerRecord(String data) {
+    private ProducerRecord<Void, String> generateProducerRecord(String data) {
         return new ProducerRecord<>(
                 TOPIC_NAME,
-                sequenceNumber,
                 data);
     }
 
