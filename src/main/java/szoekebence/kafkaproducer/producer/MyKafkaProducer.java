@@ -55,17 +55,11 @@ public class MyKafkaProducer {
 
     private void sendDataToTopic(String data) {
         try (KafkaProducer<Void, String> kafkaProducer = new KafkaProducer<>(properties)) {
-            ProducerRecord<Void, String> record = generateProducerRecord(data);
+            ProducerRecord<Void, String> record = new ProducerRecord<>(TOPIC_TO_SEND, data);
             kafkaProducer.send(record);
             kafkaProducer.flush();
             LOGGER.info(String.format("File read successfully with sequenceNumber: %d", sequenceNumber++));
         }
-    }
-
-    private ProducerRecord<Void, String> generateProducerRecord(String data) {
-        return new ProducerRecord<>(
-                TOPIC_TO_SEND,
-                data);
     }
 
     private void loadFilesFromDir() {
