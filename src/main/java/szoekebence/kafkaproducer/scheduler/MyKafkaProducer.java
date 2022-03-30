@@ -22,15 +22,15 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MyProducer {
+public class MyKafkaProducer {
 
     private static final String TOPIC_NAME = "streams-input";
-    private static final Logger LOGGER = LoggerFactory.getLogger(MyProducer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyKafkaProducer.class);
     private final Properties properties;
     private List<InputStream> inputStreams;
     private Integer sequenceNumber = 0;
 
-    public MyProducer() {
+    public MyKafkaProducer() {
         loadFilesFromDir();
         properties = new Properties();
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
