@@ -3,8 +3,8 @@ package szoekebence.kafkaproducer.producer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.apache.kafka.common.serialization.VoidSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +16,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
@@ -34,7 +37,7 @@ public class MyKafkaProducer {
         loadFilesFromDir();
         properties = new Properties();
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, VoidSerializer.class.getName());
+        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
     }
 
@@ -49,16 +52,21 @@ public class MyKafkaProducer {
     private void produceMessages() throws IOException, InterruptedException {
         for (InputStream inputStream : inputStreams) {
             sendDataToTopic(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
-            Thread.sleep(500);
+            Thread.sleep(300);
         }
     }
 
     private void sendDataToTopic(String data) {
-        try (KafkaProducer<Void, String> kafkaProducer = new KafkaProducer<>(properties)) {
-            ProducerRecord<Void, String> record = new ProducerRecord<>(TOPIC_TO_SEND, data);
+        try (KafkaProducer<Long, String> kafkaProducer = new KafkaProducer<>(properties)) {
+            long epochMilli = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault()).toInstant().toEpochMilli();
+            ProducerRecord<Long, String> record = new ProducerRecord<>(
+                    TOPIC_TO_SEND,
+                    epochMilli,
+                    data);
             kafkaProducer.send(record);
             kafkaProducer.flush();
-            LOGGER.info(String.format("File read successfully with sequenceNumber: %d", sequenceNumber++));
+            LOGGER.info(String.format("File read successfully with sequenceNumber and key: %d | %d",
+                    sequenceNumber++, epochMilli));
         }
     }
 
