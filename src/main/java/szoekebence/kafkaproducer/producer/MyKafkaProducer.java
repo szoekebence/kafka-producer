@@ -20,6 +20,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,7 +31,6 @@ public class MyKafkaProducer {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyKafkaProducer.class);
     private final Properties properties;
     private List<InputStream> inputStreams;
-    private Long sequenceNumber = 1L;
 
     public MyKafkaProducer() {
         loadFilesFromDir();
@@ -57,13 +57,14 @@ public class MyKafkaProducer {
 
     private void sendDataToTopic(String data) {
         try (KafkaProducer<Long, String> kafkaProducer = new KafkaProducer<>(properties)) {
+            Long key = (long) new Random().nextInt(5);
             ProducerRecord<Long, String> record = new ProducerRecord<>(
                     TOPIC_TO_SEND,
-                    sequenceNumber,
+                    key,
                     data);
             kafkaProducer.send(record);
             kafkaProducer.flush();
-            LOGGER.info(String.format("File read successfully with key: %d", sequenceNumber++));
+            LOGGER.info(String.format("File read successfully with key: %d", key));
         }
     }
 
