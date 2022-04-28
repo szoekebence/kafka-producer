@@ -7,6 +7,7 @@ import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,22 +17,20 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Service
 public class MyKafkaProducer {
 
     private static final String TOPIC_TO_SEND = "streams-input";
     private static final Logger LOGGER = LoggerFactory.getLogger(MyKafkaProducer.class);
     private final Properties properties;
     private List<InputStream> inputStreams;
-    private Integer sequenceNumber = 0;
+    private Long sequenceNumber = 1L;
 
     public MyKafkaProducer() {
         loadFilesFromDir();
@@ -52,26 +51,24 @@ public class MyKafkaProducer {
     private void produceMessages() throws IOException, InterruptedException {
         for (InputStream inputStream : inputStreams) {
             sendDataToTopic(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
-            Thread.sleep(300);
+            Thread.sleep(50);
         }
     }
 
     private void sendDataToTopic(String data) {
         try (KafkaProducer<Long, String> kafkaProducer = new KafkaProducer<>(properties)) {
-            long epochMilli = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault()).toInstant().toEpochMilli();
             ProducerRecord<Long, String> record = new ProducerRecord<>(
                     TOPIC_TO_SEND,
-                    epochMilli,
+                    sequenceNumber,
                     data);
             kafkaProducer.send(record);
             kafkaProducer.flush();
-            LOGGER.info(String.format("File read successfully with sequenceNumber and key: %d | %d",
-                    sequenceNumber++, epochMilli));
+            LOGGER.info(String.format("File read successfully with key: %d", sequenceNumber++));
         }
     }
 
     private void loadFilesFromDir() {
-        try (Stream<Path> path = Files.walk(Paths.get("src/main/resources/private_data/custom/"))) {
+        try (Stream<Path> path = Files.walk(Paths.get("src/main/resources/private_data/"))) {
             inputStreams = path
                     .filter(Files::isRegularFile)
                     .map(Path::toString)
