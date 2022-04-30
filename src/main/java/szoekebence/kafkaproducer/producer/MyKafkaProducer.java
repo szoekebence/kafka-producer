@@ -50,7 +50,7 @@ public class MyKafkaProducer {
         while (true) {
             for (InputStream inputStream : inputStreams) {
                 sendDataToTopic(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
-                Thread.sleep(50);
+                Thread.sleep(100);
             }
         }
     }
