@@ -77,7 +77,7 @@ public class MyKafkaProducer {
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            LOGGER.warn(String.format("File read failed: %s", e.getMessage()));
+            LOGGER.error(String.format("File read failed: %s", e.getMessage()));
         }
     }
 
@@ -85,7 +85,7 @@ public class MyKafkaProducer {
         try {
             return new FileInputStream(path);
         } catch (FileNotFoundException e) {
-            LOGGER.warn(String.format("File not found: %s", e.getMessage()));
+            LOGGER.error(String.format("File not found: %s", e.getMessage()));
         }
         return null;
     }
