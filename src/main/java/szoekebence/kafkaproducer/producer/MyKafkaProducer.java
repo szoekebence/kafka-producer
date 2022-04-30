@@ -7,7 +7,6 @@ import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,7 +23,6 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Service
 public class MyKafkaProducer {
 
     private static final String TOPIC_TO_SEND = "streams-input";
@@ -49,9 +47,11 @@ public class MyKafkaProducer {
     }
 
     private void produceMessages() throws IOException, InterruptedException {
-        for (InputStream inputStream : inputStreams) {
-            sendDataToTopic(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
-            Thread.sleep(50);
+        while (true) {
+            for (InputStream inputStream : inputStreams) {
+                sendDataToTopic(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
+                Thread.sleep(50);
+            }
         }
     }
 
