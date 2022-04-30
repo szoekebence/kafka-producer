@@ -69,7 +69,7 @@ public class MyKafkaProducer {
     }
 
     private void loadFilesFromDir() {
-        try (Stream<Path> path = Files.walk(Paths.get("src/main/resources/private_data/"))) {
+        try (Stream<Path> path = Files.walk(Paths.get("private_data/"))) {
             inputStreams = path
                     .filter(Files::isRegularFile)
                     .map(Path::toString)
