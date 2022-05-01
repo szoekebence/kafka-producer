@@ -27,13 +27,17 @@ public class MyKafkaProducer {
 
     private static final String TOPIC_TO_SEND = "streams-input";
     private static final Logger LOGGER = LoggerFactory.getLogger(MyKafkaProducer.class);
+    private static final String DELAY_ENV_VAR = "DELAY";
+    private static final String BOOTSTRAP_SERVER_ENV_VAR = "BOOTSTRAP_SERVER";
     private final Properties properties;
     private List<InputStream> inputStreams;
+    private final Long delay;
 
     public MyKafkaProducer() {
+        this.delay = Long.valueOf(System.getenv(DELAY_ENV_VAR));
         loadFilesFromDir();
         properties = new Properties();
-        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv(BOOTSTRAP_SERVER_ENV_VAR));
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
     }
@@ -49,8 +53,9 @@ public class MyKafkaProducer {
     private void produceMessages() throws IOException, InterruptedException {
         while (true) {
             for (InputStream inputStream : inputStreams) {
+                Thread.sleep(delay);
+                LOGGER.info("Waited " + delay + " MS =======================================================");
                 sendDataToTopic(new String(inputStream.readAllBytes(), StandardCharsets.UTF_8));
-                Thread.sleep(100);
             }
         }
     }
