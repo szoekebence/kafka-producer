@@ -19,7 +19,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,14 +31,15 @@ public class MyKafkaProducer {
     private final Properties properties;
     private List<InputStream> inputStreams;
     private final Long delay;
+    private long sequenceNumber = 0L;
 
     public MyKafkaProducer() {
         this.delay = Long.valueOf(System.getenv(DELAY_ENV_VAR));
+        this.properties = new Properties();
+        this.properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv(BOOTSTRAP_SERVER_ENV_VAR));
+        this.properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class.getName());
+        this.properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         loadFilesFromDir();
-        properties = new Properties();
-        properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv(BOOTSTRAP_SERVER_ENV_VAR));
-        properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class.getName());
-        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
     }
 
     public void produce() {
@@ -62,14 +62,13 @@ public class MyKafkaProducer {
 
     private void sendDataToTopic(String data) {
         try (KafkaProducer<Long, String> kafkaProducer = new KafkaProducer<>(properties)) {
-            Long key = (long) new Random().nextInt(5);
             ProducerRecord<Long, String> record = new ProducerRecord<>(
                     TOPIC_TO_SEND,
-                    key,
+                    ++sequenceNumber,
                     data);
             kafkaProducer.send(record);
             kafkaProducer.flush();
-            LOGGER.info(String.format("File read successfully with key: %d", key));
+            LOGGER.info(String.format("File read successfully with sequenceNumber: %d", sequenceNumber));
         }
     }
 
