@@ -1,4 +1,4 @@
-package szoekebence.kafkaproducer.entity.innerentity;
+package szoeke.bence.kafkaproducer.entity.innerentity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -11,10 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Request {
+public class StartLine {
 
-    public String OrigHost;
-    public String DestRealm;
-    public Long DiamAppId;
-    public AdditionalInfo AdditionalInfo;
+    public String Request;
+    public String Response;
+
 }

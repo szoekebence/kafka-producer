@@ -1,4 +1,4 @@
-package szoekebence.kafkaproducer.producer;
+package szoeke.bence.kafkaproducer.producer;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -29,11 +29,11 @@ public class MyKafkaProducer {
     private static final String BOOTSTRAP_SERVER_ENV_VAR = "BOOTSTRAP_SERVER";
     private final Properties properties;
     private List<InputStream> inputStreams;
-    private final Long delay;
+    private final long delay;
     private long sequenceNumber = 0L;
 
     public MyKafkaProducer() {
-        this.delay = Long.valueOf(System.getenv(DELAY_ENV_VAR));
+        this.delay = Long.parseLong(System.getenv(DELAY_ENV_VAR));
         this.properties = new Properties();
         this.properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv(BOOTSTRAP_SERVER_ENV_VAR));
         this.properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());

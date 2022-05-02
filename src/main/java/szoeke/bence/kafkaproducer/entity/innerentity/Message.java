@@ -1,4 +1,4 @@
-package szoekebence.kafkaproducer.entity.innerentity;
+package szoeke.bence.kafkaproducer.entity.innerentity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -11,11 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class KeyIds {
+public class Message {
 
-    public String ServedUser;
-    public String Impi;
-    public String Pcv;
-    public String SsId;
+    public Request Request;
+    public Response Response;
 
 }

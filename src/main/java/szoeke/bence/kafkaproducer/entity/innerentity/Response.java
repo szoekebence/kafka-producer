@@ -1,4 +1,4 @@
-package szoekebence.kafkaproducer.entity.innerentity;
+package szoeke.bence.kafkaproducer.entity.innerentity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;

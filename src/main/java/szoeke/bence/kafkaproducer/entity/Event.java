@@ -1,12 +1,12 @@
-package szoekebence.kafkaproducer.entity;
+package szoeke.bence.kafkaproducer.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import szoekebence.kafkaproducer.entity.innerentity.EventInfo;
-import szoekebence.kafkaproducer.entity.innerentity.EventRecordHeader;
+import szoeke.bence.kafkaproducer.entity.innerentity.EventInfo;
+import szoeke.bence.kafkaproducer.entity.innerentity.EventRecordHeader;
 
 import java.io.Serializable;
 

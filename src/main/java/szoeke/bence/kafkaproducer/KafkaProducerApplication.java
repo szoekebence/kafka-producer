@@ -1,6 +1,6 @@
-package szoekebence.kafkaproducer;
+package szoeke.bence.kafkaproducer;
 
-import szoekebence.kafkaproducer.producer.MyKafkaProducer;
+import szoeke.bence.kafkaproducer.producer.MyKafkaProducer;
 
 public class KafkaProducerApplication {
 
