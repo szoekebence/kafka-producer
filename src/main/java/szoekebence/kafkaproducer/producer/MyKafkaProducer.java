@@ -3,7 +3,6 @@ package szoekebence.kafkaproducer.producer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +36,7 @@ public class MyKafkaProducer {
         this.delay = Long.valueOf(System.getenv(DELAY_ENV_VAR));
         this.properties = new Properties();
         this.properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv(BOOTSTRAP_SERVER_ENV_VAR));
-        this.properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class.getName());
+        this.properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         this.properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         loadFilesFromDir();
     }
@@ -61,10 +60,10 @@ public class MyKafkaProducer {
     }
 
     private void sendDataToTopic(String data) {
-        try (KafkaProducer<Long, String> kafkaProducer = new KafkaProducer<>(properties)) {
-            ProducerRecord<Long, String> record = new ProducerRecord<>(
+        try (KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>(properties)) {
+            ProducerRecord<String, String> record = new ProducerRecord<>(
                     TOPIC_TO_SEND,
-                    ++sequenceNumber,
+                    String.valueOf(++sequenceNumber),
                     data);
             kafkaProducer.send(record);
             kafkaProducer.flush();
