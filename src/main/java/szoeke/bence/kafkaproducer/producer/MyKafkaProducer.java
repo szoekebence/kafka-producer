@@ -76,7 +76,7 @@ public class MyKafkaProducer {
                     event);
             kafkaProducer.send(record);
             kafkaProducer.flush();
-            LOGGER.info(String.format("File read successfully with sequenceNumber: %d", sequenceNumber));
+            LOGGER.info(String.format("Send file successfully with sequenceNumber: %d", sequenceNumber));
         }
     }
 
