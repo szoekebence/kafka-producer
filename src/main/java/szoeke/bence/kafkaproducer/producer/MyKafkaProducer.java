@@ -61,10 +61,16 @@ public class MyKafkaProducer {
     private void produceMessages() throws InterruptedException {
         while (true) {
             for (Event event : events) {
-                Thread.sleep(delay);
+                sleepIfNeeded();
                 LOGGER.info("Waited " + delay + " MS =======================================================");
                 sendDataToTopic(event);
             }
+        }
+    }
+
+    private void sleepIfNeeded() throws InterruptedException {
+        if (delay > 0) {
+            Thread.sleep(delay);
         }
     }
 
