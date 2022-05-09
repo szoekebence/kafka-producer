@@ -62,7 +62,6 @@ public class MyKafkaProducer {
         while (true) {
             for (Event event : events) {
                 sleepIfNeeded();
-                LOGGER.info("Waited " + delay + " MS =======================================================");
                 sendDataToTopic(event);
             }
         }
@@ -71,6 +70,7 @@ public class MyKafkaProducer {
     private void sleepIfNeeded() throws InterruptedException {
         if (delay > 0) {
             Thread.sleep(delay);
+            LOGGER.info("Waited " + delay + " MS =======================================================");
         }
     }
 
