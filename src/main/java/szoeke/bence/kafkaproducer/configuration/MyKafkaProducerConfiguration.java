@@ -17,9 +17,9 @@ public class MyKafkaProducerConfiguration {
     private static final String LINGER_MS_ENV_VAR = "LINGER_MS";
     private static final String BATCH_SIZE_KB_ENV_VAR = "BATCH_SIZE_KB";
     private static final String BUFFER_MEMORY_KB_ENV_VAR = "BUFFER_MEMORY_KB";
-    private static final String BUFFER_MEMORY = getSizeInBytes(BUFFER_MEMORY_KB_ENV_VAR);
+    private static final String BUFFER_MEMORY = generateSizeInBytes(BUFFER_MEMORY_KB_ENV_VAR);
     private static final String LINGER_MS = System.getenv(LINGER_MS_ENV_VAR);
-    private static final String BATCH_SIZE = getSizeInBytes(BATCH_SIZE_KB_ENV_VAR);
+    private static final String BATCH_SIZE = generateSizeInBytes(BATCH_SIZE_KB_ENV_VAR);
 
     public Properties getProperties() {
         Properties properties = new Properties();
@@ -40,7 +40,7 @@ public class MyKafkaProducerConfiguration {
         }
     }
 
-    private static String getSizeInBytes(String envVarName) {
+    private static String generateSizeInBytes(String envVarName) {
         return String.valueOf(Long.parseLong(System.getenv(envVarName)) * 1024L);
     }
 }
