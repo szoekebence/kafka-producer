@@ -1,4 +1,4 @@
-package szoeke.bence.kafkaproducer.entity.innerentity;
+package szoeke.bence.kafkaproducer.entity.inner;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -6,16 +6,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Cause {
+public class DiameterMessage {
 
-    public Long ErrorCode;
-    public List<AdditionalInfo> AdditionalInfos;
-
+    public Long Time;
+    public String Direction;
+    public String Cmd;
+    public String SessionId;
+    public Message Message;
 }

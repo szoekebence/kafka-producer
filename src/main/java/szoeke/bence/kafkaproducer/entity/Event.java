@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import szoeke.bence.kafkaproducer.entity.innerentity.EventInfo;
-import szoeke.bence.kafkaproducer.entity.innerentity.EventRecordHeader;
+import szoeke.bence.kafkaproducer.entity.inner.EventInfo;
+import szoeke.bence.kafkaproducer.entity.inner.EventRecordHeader;
 
 import java.io.Serializable;
 

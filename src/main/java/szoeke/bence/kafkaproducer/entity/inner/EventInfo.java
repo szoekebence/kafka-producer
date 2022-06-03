@@ -1,4 +1,4 @@
-package szoeke.bence.kafkaproducer.entity.innerentity;
+package szoeke.bence.kafkaproducer.entity.inner;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -13,9 +13,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AdditionalInfo {
+public class EventInfo {
 
-    public String Type;
-    public List<NameValuePair<Long>> Avps;
+    public List<SipMessage> SipMessages;
+    public List<DiameterMessage> DiameterMessages;
+    public List<Object> DnsEnumMessages;
 
 }
