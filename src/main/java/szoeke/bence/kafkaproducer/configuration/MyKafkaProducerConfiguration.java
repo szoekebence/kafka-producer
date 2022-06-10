@@ -26,6 +26,7 @@ public class MyKafkaProducerConfiguration {
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv(BOOTSTRAP_SERVER_ENV_VAR));
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, EventSerializer.class.getName());
+        properties.setProperty(ProducerConfig.CONNECTIONS_MAX_IDLE_MS_CONFIG, "900000");
         setPropertiesForBatchProducing(properties);
         return properties;
     }
