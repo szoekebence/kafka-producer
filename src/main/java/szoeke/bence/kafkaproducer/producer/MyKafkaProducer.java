@@ -10,6 +10,7 @@ import szoeke.bence.kafkaproducer.configuration.MyKafkaProducerConfiguration;
 import szoeke.bence.kafkaproducer.entity.Event;
 import szoeke.bence.kafkaproducer.utility.EventSerializer;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,7 @@ public class MyKafkaProducer {
             LOGGER.error(String.format("Exception occurred while producing messages: %s", e.getMessage()));
         } finally {
             kafkaProducer.flush();
+            kafkaProducer.close(Duration.ofSeconds(10L));
         }
     }
 
