@@ -6,7 +6,7 @@ import org.apache.kafka.common.record.CompressionType;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import szoeke.bence.kafkaproducer.utility.EventSerializer;
+import szoeke.bence.kafkaproducer.utility.JsonNodeSerializer;
 
 import java.util.Properties;
 
@@ -25,7 +25,7 @@ public class MyKafkaProducerConfiguration {
         Properties properties = new Properties();
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, System.getenv(BOOTSTRAP_SERVER_ENV_VAR));
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, EventSerializer.class.getName());
+        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonNodeSerializer.class.getName());
         properties.setProperty(ProducerConfig.CONNECTIONS_MAX_IDLE_MS_CONFIG, "900000");
         setPropertiesForBatchProducing(properties);
         return properties;

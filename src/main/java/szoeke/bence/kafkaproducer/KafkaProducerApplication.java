@@ -13,7 +13,7 @@ public class KafkaProducerApplication {
         MyKafkaProducer producer = new MyKafkaProducer(
                 objectMapper,
                 new MyKafkaProducerConfiguration(),
-                new FileParser(objectMapper).generateEventsFromFiles());
+                new FileParser(objectMapper).generateJsonNodesFromFiles());
         producer.produce();
     }
 }

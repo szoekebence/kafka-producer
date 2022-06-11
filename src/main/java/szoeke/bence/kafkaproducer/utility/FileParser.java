@@ -1,9 +1,9 @@
 package szoeke.bence.kafkaproducer.utility;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import szoeke.bence.kafkaproducer.entity.Event;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,20 +21,20 @@ public class FileParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileParser.class);
 
-    private final EventDeserializer eventDeserializer;
+    private final JsonNodeDeserializer jsonNodeDeserializer;
 
     public FileParser(ObjectMapper objectMapper) {
-        this.eventDeserializer = new EventDeserializer(objectMapper);
+        this.jsonNodeDeserializer = new JsonNodeDeserializer(objectMapper);
     }
 
-    public List<Event> generateEventsFromFiles() {
+    public List<JsonNode> generateJsonNodesFromFiles() {
         try (Stream<Path> path = Files.walk(Paths.get("private_data/"))) {
             return path
                     .filter(Files::isRegularFile)
                     .map(Path::toString)
                     .map(this::mapFileToInputStream)
                     .filter(Objects::nonNull)
-                    .map(this::mapInputStreamToEvent)
+                    .map(this::mapInputStreamToJsonNode)
                     .collect(Collectors.toList());
         } catch (IOException e) {
             LOGGER.error(String.format("File read failed: %s", e.getMessage()));
@@ -51,9 +51,9 @@ public class FileParser {
         return null;
     }
 
-    private Event mapInputStreamToEvent(InputStream inputStream) {
+    private JsonNode mapInputStreamToJsonNode(InputStream inputStream) {
         try {
-            return eventDeserializer.deserialize(null, inputStream.readAllBytes());
+            return jsonNodeDeserializer.deserialize(null, inputStream.readAllBytes());
         } catch (IOException e) {
             throw new RuntimeException("Deserialization failed!", e);
         }
