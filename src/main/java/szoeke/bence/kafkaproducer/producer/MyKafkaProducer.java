@@ -38,12 +38,13 @@ public class MyKafkaProducer {
     public void produce() {
         try (kafkaProducer) {
             sendEventsToTopic();
-            LOGGER.info(String.format("The producing has stopped after 10 minutes and %d events.", sequenceNumber));
         } catch (Exception e) {
             LOGGER.error(String.format("Exception occurred while producing messages: %s", e.getMessage()));
         } finally {
             kafkaProducer.flush();
             kafkaProducer.close(Duration.ofSeconds(10L));
+            LOGGER.info(String.format("The producing has stopped after 10 minutes and %d events.", sequenceNumber));
+            sleep10sec();
         }
     }
 
@@ -60,6 +61,14 @@ public class MyKafkaProducer {
         sleepIfNeeded();
         kafkaProducer.send(producerRecord);
         sequenceNumber++;
+    }
+
+    private void sleep10sec() {
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private List<ProducerRecord<Void, JsonNode>> generateProducerRecords(List<JsonNode> events) {
