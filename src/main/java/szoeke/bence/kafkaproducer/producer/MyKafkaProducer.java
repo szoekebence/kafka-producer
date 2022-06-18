@@ -44,7 +44,7 @@ public class MyKafkaProducer {
             kafkaProducer.flush();
             kafkaProducer.close(Duration.ofSeconds(10L));
             LOGGER.info(String.format("The producing has stopped after 10 minutes and %d events.", sequenceNumber));
-            sleep10sec();
+            sleepIfNeeded(10000);
         }
     }
 
@@ -58,17 +58,9 @@ public class MyKafkaProducer {
     }
 
     private void sendSingleEventToTopic(ProducerRecord<Void, JsonNode> producerRecord) {
-        sleepIfNeeded();
+        sleepIfNeeded(DELAY);
         kafkaProducer.send(producerRecord);
         sequenceNumber++;
-    }
-
-    private void sleep10sec() {
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private List<ProducerRecord<Void, JsonNode>> generateProducerRecords(List<JsonNode> events) {
@@ -84,10 +76,10 @@ public class MyKafkaProducer {
                 event);
     }
 
-    private void sleepIfNeeded() {
-        if (DELAY > 0) {
+    private void sleepIfNeeded(long delay) {
+        if (delay > 0) {
             try {
-                Thread.sleep(DELAY);
+                Thread.sleep(delay);
             } catch (InterruptedException e) {
                 LOGGER.error("Exception occurred by sleep for delay: ", e);
             }
