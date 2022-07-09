@@ -37,7 +37,7 @@ public class FileParser {
                     .map(this::mapInputStreamToJsonNode)
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            LOGGER.error(String.format("File read failed: %s", e.getMessage()));
+            LOGGER.error("File read failed: {}", e.getMessage());
         }
         return null;
     }
@@ -46,7 +46,7 @@ public class FileParser {
         try {
             return new FileInputStream(path);
         } catch (FileNotFoundException e) {
-            LOGGER.error(String.format("File not found: %s", e.getMessage()));
+            LOGGER.error("File not found: {}", e.getMessage());
         }
         return null;
     }

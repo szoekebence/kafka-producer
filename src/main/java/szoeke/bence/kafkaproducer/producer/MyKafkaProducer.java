@@ -30,18 +30,18 @@ public class MyKafkaProducer {
                 new StringSerializer(),
                 new JsonNodeSerializer(objectMapper));
         this.events = events;
-        LOGGER.info(String.format("%d ms delay set between each event.\n", DELAY));
+        LOGGER.info("{} ms delay set between each event.\n", DELAY);
     }
 
     public void produce() {
         try (kafkaProducer) {
             sendEventsToTopic();
         } catch (Exception e) {
-            LOGGER.error(String.format("Exception occurred while producing messages: %s", e.getMessage()));
+            LOGGER.error("Exception occurred while producing messages: {}", e.getMessage());
         } finally {
             kafkaProducer.flush();
             kafkaProducer.close();
-            LOGGER.info(String.format("The producing has stopped after 10 minutes and %d events.", sequenceNumber));
+            LOGGER.info("The producing has stopped after 10 minutes and {} events.", sequenceNumber);
             sleepIfNeeded(10000);
         }
     }
