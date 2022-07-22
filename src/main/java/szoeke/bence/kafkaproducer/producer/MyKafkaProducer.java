@@ -17,7 +17,8 @@ public class MyKafkaProducer {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyKafkaProducer.class);
     private static final String TOPIC_TO_SEND = "streams-input";
     private static final String DELAY_ENV_VAR = "DELAY_MS";
-    private static final long TEN_MINUTES_IN_NANOS = 600000000000L;
+    public static final String PRODUCING_TIME_MIN_ENV_VAR = "PRODUCING_TIME_MIN";
+    private static final long PRODUCING_TIME_NANOS = Long.parseLong(System.getenv(PRODUCING_TIME_MIN_ENV_VAR)) * 60000000000L;
     private static final long DELAY = Long.parseLong(System.getenv(DELAY_ENV_VAR));
     private final KafkaProducer<String, JsonNode> kafkaProducer;
     private final List<JsonNode> events;
@@ -47,7 +48,7 @@ public class MyKafkaProducer {
     }
 
     private void sendEventsToTopic() {
-        long endTime = System.nanoTime() + TEN_MINUTES_IN_NANOS;
+        long endTime = System.nanoTime() + PRODUCING_TIME_NANOS;
         while (System.nanoTime() < endTime) {
             events
                     .parallelStream()
