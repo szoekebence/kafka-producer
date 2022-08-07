@@ -17,7 +17,7 @@ public class MyKafkaProducer {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyKafkaProducer.class);
     private static final String TOPIC_TO_SEND = "streams-input";
     private static final String DELAY_ENV_VAR = "DELAY_MS";
-    public static final String PRODUCING_TIME_MIN_ENV_VAR = "PRODUCING_TIME_MIN";
+    private static final String PRODUCING_TIME_MIN_ENV_VAR = "PRODUCING_TIME_MIN";
     private static final long PRODUCING_TIME_NANOS = Long.parseLong(System.getenv(PRODUCING_TIME_MIN_ENV_VAR)) * 60000000000L;
     private static final long DELAY = Long.parseLong(System.getenv(DELAY_ENV_VAR));
     private final KafkaProducer<String, JsonNode> kafkaProducer;
@@ -42,7 +42,8 @@ public class MyKafkaProducer {
         } finally {
             kafkaProducer.flush();
             kafkaProducer.close();
-            LOGGER.info("The producing has stopped after 10 minutes and {} events.", sequenceNumber);
+            LOGGER.info("The producing has stopped after {} minutes and {} events.",
+                    System.getenv(PRODUCING_TIME_MIN_ENV_VAR), sequenceNumber);
             sleepIfNeeded(10000);
         }
     }
