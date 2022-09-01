@@ -40,8 +40,6 @@ public class MyKafkaProducer {
         } catch (Exception e) {
             LOGGER.error("Exception occurred while producing messages: {}", e.getMessage());
         } finally {
-            kafkaProducer.flush();
-            kafkaProducer.close();
             LOGGER.info("The producing has stopped after {} minutes and {} events.",
                     System.getenv(PRODUCING_TIME_MIN_ENV_VAR), sequenceNumber);
             sleepIfNeeded(10000);
